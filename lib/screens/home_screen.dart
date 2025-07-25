@@ -14,7 +14,6 @@ import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -24,33 +23,39 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Map<String, dynamic>> services = [
     {
-      "label": "Ride Service",
-      "image": "assets/images/Bike.png", // Replace with working image
+      "label": "Ride",
+      "image": "https://cdn-icons-png.flaticon.com/512/854/854894.png",
+      "color": Colors.blue,
       "page": const RideScreen(),
     },
     {
-      "label": "Food Ordering",
-      "image": "https://example.com/food.jpg",
+      "label": "Food",
+      "image": "https://cdn-icons-png.flaticon.com/512/3075/3075977.png",
+      "color": Colors.orange,
       "page": const FoodScreen(),
     },
     {
-      "label": "Hotel Booking",
-      "image": "https://example.com/hotel.jpg",
+      "label": "Hotel",
+      "image": "https://cdn-icons-png.flaticon.com/512/2972/2972638.png",
+      "color": Colors.indigo,
       "page": const HotelScreen(),
     },
     {
-      "label": "Medicine Booking",
-      "image": "https://example.com/medicine.jpg",
+      "label": "Medicine",
+      "image": "https://cdn-icons-png.flaticon.com/512/899/899765.png",
+      "color": Colors.green,
       "page": const MedicineScreen(),
     },
     {
-      "label": "Doctor Consultation",
-      "image": "https://example.com/doctor.jpg",
+      "label": "Doctors",
+      "image": "https://cdn-icons-png.flaticon.com/512/3774/3774299.png",
+      "color": Colors.red,
       "page": const DoctorScreen(),
     },
     {
-      "label": "Hair Styling",
-      "image": "https://example.com/hair.jpg",
+      "label": "Beauty",
+      "image": "https://cdn-icons-png.flaticon.com/512/3714/3714453.png",
+      "color": Colors.pink,
       "page": const HairstyleScreen(),
     },
   ];
@@ -70,20 +75,22 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildSearchBar() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFFE7EDF4),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        ],
       ),
       child: Row(
         children: [
-          const Icon(Icons.search, color: Color(0xFF49739C)),
-          const SizedBox(width: 8),
+          const Icon(Icons.search, color: Colors.grey),
+          const SizedBox(width: 10),
           Expanded(
             child: TextField(
               decoration: const InputDecoration(
-                hintText: "Search for services",
-                hintStyle: TextStyle(color: Color(0xFF49739C)),
+                hintText: "Search services",
                 border: InputBorder.none,
               ),
             ),
@@ -94,71 +101,82 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildServiceCard(Map<String, dynamic> item) {
-    return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => item['page']),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AspectRatio(
-            aspectRatio: 1,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
+    return InkWell(
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (_) => item['page']));
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: const [
+            BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 4)),
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              backgroundColor: item['color'].withOpacity(0.15),
+              radius: 30,
               child: Image.network(
                 item['image'],
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset('assets/images/placeholder.png', fit: BoxFit.cover);
-                },
+                width: 30,
+                height: 30,
+                fit: BoxFit.contain,
               ),
             ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            item['label'],
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w500,
-              fontSize: 14,
-              color: const Color(0xFF0D141C),
+            const SizedBox(height: 12),
+            Text(
+              item['label'],
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+                color: const Color(0xFF333333),
+              ),
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildHomeContent() {
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        const SizedBox(height: 12),
-        _buildSearchBar(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          child: Text(
-            "Quick Access",
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: const Color(0xFF0D141C),
+    return SafeArea(
+      child: CustomScrollView(
+        slivers: [
+          const SliverToBoxAdapter(child: SizedBox(height: 8)),
+          SliverToBoxAdapter(child: _buildSearchBar()),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Text(
+                "Quick Access",
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: const Color(0xFF333333),
+                ),
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: GridView.count(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            children: services.map(_buildServiceCard).toList(),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverGrid.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 1.0,
+              children: services.map(_buildServiceCard).toList(),
+            ),
           ),
-        ),
-        const SizedBox(height: 20),
-      ],
+          const SliverToBoxAdapter(child: SizedBox(height: 20)),
+        ],
+      ),
     );
   }
 
@@ -180,30 +198,32 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F3F3),
+      backgroundColor: const Color(0xFFF8F6FC),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: const Color(0xFFF3F3F3),
-        title: const Text("Home", style: TextStyle(color: Color(0xFF0D141C))),
+        backgroundColor: const Color(0xFFF8F6FC),
         centerTitle: true,
+        title: Text("Femivio",
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF333333),
+            )),
         leading: Padding(
           padding: const EdgeInsets.all(8),
           child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
+            backgroundColor: Colors.white,
             child: ClipOval(
               child: Image.network(
-                "https://example.com/profile.jpg",
+                "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset("assets/images/placeholder.png", fit: BoxFit.cover);
-                },
               ),
             ),
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_none, color: Color(0xFF0D141C)),
+            icon: const Icon(Icons.notifications_none, color: Color(0xFF333333)),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("No new notifications")),
@@ -216,10 +236,10 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onTabTapped,
-        selectedItemColor: const Color(0xFF0D141C),
-        unselectedItemColor: const Color(0xFF49739C),
+        selectedItemColor: const Color(0xFF6A1B9A),
+        unselectedItemColor: const Color(0xFF888888),
+        backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xFFF3F3F3),
         items: _bottomItems
             .map((item) => BottomNavigationBarItem(
           icon: Icon(item['icon']),

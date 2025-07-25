@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -11,112 +14,122 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _placeController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void _register() {
-    final name = _nameController.text.trim();
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
+  Future<void> registerUser() async {
+    final url = Uri.parse('http://192.168.1.39:8080/api/users/register');
 
-    if (name.isEmpty || email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill all fields")),
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'name': _nameController.text.trim(),
+          'email': _emailController.text.trim(),
+          'phone': _phoneController.text.trim(),
+          'place': _placeController.text.trim(),
+          'password': _passwordController.text.trim(),
+        }),
       );
-      return;
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['message'] == 'User registered successfully') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Registered successfully. Please login.")),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'] ?? 'Registration failed')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
     }
+  }
 
-    // TODO: Handle registration logic
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Registered Successfully")),
+  Widget _buildTextField(String label, TextEditingController controller,
+      {bool isPassword = false, TextInputType? keyboardType}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: TextField(
+        controller: controller,
+        obscureText: isPassword,
+        keyboardType: keyboardType ?? TextInputType.text,
+        decoration: InputDecoration(
+          labelText: label,
+          filled: true,
+          fillColor: Colors.grey[100],
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
     );
-
-    Navigator.pop(context); // Back to login screen
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
-      body: Center(
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(32),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade400,
-                  offset: const Offset(6, 6),
-                  blurRadius: 20,
-                ),
-                const BoxShadow(
-                  color: Colors.white,
-                  offset: Offset(-6, -6),
-                  blurRadius: 20,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.person_add_alt_1, size: 72, color: Colors.deepPurple),
-                const SizedBox(height: 16),
-                const Text(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 30),
+              Center(
+                child: Text(
                   "Create Account",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.deepPurple),
-                ),
-                const SizedBox(height: 24),
-                TextField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Full Name',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.person),
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple,
                   ),
                 ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.email),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.lock),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: _register,
+              ),
+              const SizedBox(height: 30),
+              _buildTextField("Name", _nameController),
+              _buildTextField("Email", _emailController, keyboardType: TextInputType.emailAddress),
+              _buildTextField("Phone", _phoneController, keyboardType: TextInputType.phone),
+              _buildTextField("Place", _placeController),
+              _buildTextField("Password", _passwordController, isPassword: true),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: registerUser,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    elevation: 10,
                   ),
-                  child: const Text("Register", style: TextStyle(fontSize: 18)),
+                  child: const Text("Register", style: TextStyle(fontSize: 16)),
                 ),
-                const SizedBox(height: 20),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Navigate back to login
-                  },
-                  child: const Text("Already have an account? Login"),
+              ),
+              const SizedBox(height: 12),
+              Center(
+                child: TextButton(
+                  onPressed: () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  ),
+                  child: const Text(
+                    "Already have an account? Login",
+                    style: TextStyle(color: Colors.deepPurple),
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

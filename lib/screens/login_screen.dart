@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'register_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'home_screen.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,169 +17,85 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void _login() {
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
+  Future<void> loginUser() async {
+    final url = Uri.parse('http://192.168.1.39:8080/api/users/login');
 
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please enter both email and password")),
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': _emailController.text.trim(),
+          'password': _passwordController.text.trim(),
+        }),
       );
-      return;
-    }
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const HomeScreen()),
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['message'] == 'Login successful') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'] ?? 'Login failed')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    }
+  }
+
+  InputDecoration inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      filled: true,
+      fillColor: Colors.white,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FC),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            /// Hero Banner
-            Container(
-              height: 280,
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(
-                    'https://lh3.googleusercontent.com/aida-public/AB6AXuCqqph72f0iPafUx1ym2dStSTBKWK3q3CVeYYCoxakuIlDWgkUG4adXw1jF4bi72Bp-wP7IUQnRK0Th0_bDMrNnHmqICFvWkx7KdOmnBvuIKAmIUzxIGxy2W7L0Tkc79ss5Vj6Xq2uwaw4kAf0VA57MNtDES2cq3F4hFX7kKOE8EqPONqfN9P_5r_YOuLDjKtk6RlCxLV_Jpo4NlcLKXkfnl8dMcLlrNvaLpUoYyjZDpZFidsYBeEJ5qzUKco_0qS9iAkU141QUaqgD',
+      backgroundColor: const Color(0xFFECECFF),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                Text("Welcome Back", style: GoogleFonts.poppins(fontSize: 26, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                TextField(controller: _emailController, decoration: inputDecoration("Email")),
+                const SizedBox(height: 16),
+                TextField(controller: _passwordController, obscureText: true, decoration: inputDecoration("Password")),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: loginUser,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6A5AE0),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
                   ),
-                  fit: BoxFit.cover,
+                  child: Text("Login", style: GoogleFonts.poppins(fontSize: 16, color: Colors.white)),
                 ),
-              ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                    );
+                  },
+                  child: Text("Don't have an account? Register", style: GoogleFonts.poppins()),
+                )
+              ],
             ),
-
-            const SizedBox(height: 20),
-
-            /// Welcome Heading
-            const Text(
-              "Welcome to Femivio",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF0D0F1C),
-              ),
-              textAlign: TextAlign.center,
-            ),
-
-            const SizedBox(height: 16),
-
-            /// Input Fields
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      hintText: "Email or Phone",
-                      filled: true,
-                      fillColor: const Color(0xFFE6E9F4),
-                      contentPadding: const EdgeInsets.all(18),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
-                      ),
-                      hintStyle: const TextStyle(
-                        color: Color(0xFF47569E),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      hintText: "Password",
-                      filled: true,
-                      fillColor: const Color(0xFFE6E9F4),
-                      contentPadding: const EdgeInsets.all(18),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
-                      ),
-                      hintStyle: const TextStyle(
-                        color: Color(0xFF47569E),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  /// Login Button
-                  ElevatedButton(
-                    onPressed: _login,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF607AFB),
-                      foregroundColor: const Color(0xFFF8F9FC),
-                      minimumSize: const Size.fromHeight(48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: const Text(
-                      "Login",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            /// Sign Up Button
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE6E9F4),
-                  foregroundColor: const Color(0xFF0D0F1C),
-                  minimumSize: const Size.fromHeight(48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: const Text(
-                  "Sign Up",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-            ),
-
-            /// Terms
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12),
-              child: Text(
-                "By continuing, you agree to our Terms of Service and Privacy Policy",
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF47569E),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
+          ),
         ),
       ),
     );
