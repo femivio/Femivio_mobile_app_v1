@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/user.dart';
 
 class ApiService {
-  static const baseUrl = 'http://192.168.1.39:8080/api/users';
+  static const baseUrl = 'http://13.48.190.144:8080/api/users';
 
   static Future<http.Response> register(User user) {
     return http.post(
