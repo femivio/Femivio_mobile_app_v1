@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'ride_screen.dart';
 import 'food_screen.dart';
 import 'hotel_screen.dart';

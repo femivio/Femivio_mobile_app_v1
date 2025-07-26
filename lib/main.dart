@@ -15,6 +15,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Femivio',
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+      ),
       initialRoute: '/login',
       routes: {
         '/login': (_) => const LoginScreen(),
