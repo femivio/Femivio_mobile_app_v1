@@ -9,7 +9,7 @@ class Food {
     return Food(
       name: json['name'],
       imageUrl: json['imageUrl'],
-      price: json['price'].toDouble(),
+      price: (json['price'] as num).toDouble(),
     );
   }
 }

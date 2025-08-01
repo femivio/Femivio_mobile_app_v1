@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'ride_screen.dart';
 import 'food_screen.dart';
 import 'hotel_screen.dart';
-import 'doctor_screen.dart';
 import 'medicine_screen.dart';
+import 'doctor_screen.dart';
 import 'hair_screen.dart';
 import 'my_booking_screen.dart';
 import 'wallet_screen.dart';
@@ -13,6 +14,7 @@ import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -22,44 +24,40 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Map<String, dynamic>> services = [
     {
-      "label": "Ride",
-      "image": "https://cdn-icons-png.flaticon.com/512/854/854894.png",
-      "color": Colors.blue,
-      "page": const RideScreen(),
+      'label': 'Book Ride',
+      'image': 'https://images.unsplash.com/photo-1606760726760-0d36c3f5e2cf?auto=format&fit=crop&w=400&q=80',
+      'page': RideScreen(),
     },
     {
-      "label": "Food",
-      "image": "https://cdn-icons-png.flaticon.com/512/3075/3075977.png",
-      "color": Colors.orange,
-      "page": const FoodScreen(),
+      'label': 'Food',
+      'image': 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=400&q=80',
+      'page': FoodScreen(),
     },
     {
-      "label": "Hotel",
-      "image": "https://cdn-icons-png.flaticon.com/512/2972/2972638.png",
-      "color": Colors.indigo,
-      "page": const HotelScreen(),
+      'label': 'Hotel',
+      'image': 'https://images.unsplash.com/photo-1551887373-6ccdb6f9724b?auto=format&fit=crop&w=400&q=80',
+      'page': HotelScreen(),
     },
     {
-      "label": "Medicine",
-      "image": "https://cdn-icons-png.flaticon.com/512/899/899765.png",
-      "color": Colors.green,
-      "page": const MedicineScreen(),
+      'label': 'Doctor',
+      'image': 'https://images.unsplash.com/photo-1580281658629-33cbf7fdbb25?auto=format&fit=crop&w=400&q=80',
+      'page': DoctorScreen(),
     },
     {
-      "label": "Doctors",
-      "image": "https://cdn-icons-png.flaticon.com/512/3774/3774299.png",
-      "color": Colors.red,
-      "page": const DoctorScreen(),
+      'label': 'Medicine',
+      'image': 'https://images.unsplash.com/photo-1588776814546-ec7e4d9af6f1?auto=format&fit=crop&w=400&q=80',
+      'page': MedicineScreen(),
     },
     {
-      "label": "Beauty",
-      "image": "https://cdn-icons-png.flaticon.com/512/3714/3714453.png",
-      "color": Colors.pink,
-      "page": const HairstyleScreen(),
+      'label': 'Hair Style',
+      'image': 'https://images.unsplash.com/photo-1522336572468-97b06e8ef143?auto=format&fit=crop&w=400&q=80',
+      'page': HairstyleScreen(),
     },
   ];
 
-  final List<Map<String, dynamic>> _bottomItems = [
+
+
+  final List<Map<String, dynamic>> bottomItems = [
     {'icon': Icons.home, 'label': 'Home'},
     {'icon': Icons.receipt_long, 'label': 'Bookings'},
     {'icon': Icons.account_balance_wallet, 'label': 'Wallet'},
@@ -71,27 +69,79 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _selectedIndex = index);
   }
 
-  Widget _buildSearchBar() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
-        ],
-      ),
+  Widget _buildGreeting() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, top: 20, right: 16),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Icon(Icons.search, color: Colors.grey),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              decoration: const InputDecoration(
-                hintText: "Search services",
-                border: InputBorder.none,
+          Row(
+            children: [
+              const CircleAvatar(
+                backgroundColor: Color(0xFFE0D7F9),
+                child: Icon(Icons.person, color: Colors.deepPurple),
               ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Hello, User 👋",
+                    style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on, size: 16, color: Colors.deepPurple),
+                      Text("Your City, India", style: GoogleFonts.poppins(fontSize: 13, color: Colors.grey[700])),
+                    ],
+                  )
+                ],
+              )
+            ],
+          ),
+          IconButton(
+            icon: const Icon(Icons.notifications_none, color: Colors.deepPurple),
+            onPressed: () {
+              // TODO: Add notification action
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBannerCard(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    return Container(
+      width: screenWidth - 32, // Full width minus horizontal margin
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: const EdgeInsets.all(20),
+      height: 180, // Increased height
+      decoration: BoxDecoration(
+        color: const Color(0xFFD6C9FF),
+        borderRadius: BorderRadius.circular(20),
+        image: const DecorationImage(
+          image: NetworkImage("https://cdn-icons-png.flaticon.com/512/1046/1046857.png"),
+          alignment: Alignment.bottomRight,
+          scale: 2.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Get 15% OFF",
+            style: GoogleFonts.poppins(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "On all bookings today",
+            style: GoogleFonts.poppins(
+              fontSize: 16,
             ),
           ),
         ],
@@ -99,82 +149,126 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildServiceCard(Map<String, dynamic> item) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (_) => item['page']));
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: const [
-            BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 4)),
-          ],
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              backgroundColor: item['color'].withOpacity(0.15),
-              radius: 30,
-              child: Image.network(
-                item['image'],
-                width: 30,
-                height: 30,
-                fit: BoxFit.contain,
+  Widget _buildCategoryScroll() {
+    return SizedBox(
+      height: 110,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: services.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 16),
+        itemBuilder: (context, index) {
+          final item = services[index];
+
+          return GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => item['page']),
+            ),
+            child: Container(
+              width: 85,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.deepPurple.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.deepPurple.withOpacity(0.15),
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        item['image'],
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    item['label'],
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 12),
-            Text(
-              item['label'],
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-                color: const Color(0xFF333333),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildHomeContent() {
-    return SafeArea(
-      child: CustomScrollView(
-        slivers: [
-          const SliverToBoxAdapter(child: SizedBox(height: 8)),
-          SliverToBoxAdapter(child: _buildSearchBar()),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Text(
-                "Quick Access",
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: const Color(0xFF333333),
-                ),
+  Widget _buildServiceGrid() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: services.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 1,
+        ),
+        itemBuilder: (context, index) {
+          final item = services[index];
+          return GestureDetector(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => item['page'])),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.deepPurple.withOpacity(0.08),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.network(item['image'], height: 50, width: 50),
+                  const SizedBox(height: 10),
+                  Text(
+                    item['label'],
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: SliverGrid.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 1.0,
-              children: services.map(_buildServiceCard).toList(),
-            ),
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 20)),
-        ],
+          );
+        },
       ),
     );
   }
@@ -190,56 +284,48 @@ class _HomeScreenState extends State<HomeScreen> {
       case 4:
         return const ProfileScreen();
       default:
-        return _buildHomeContent();
+        return SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildGreeting(),
+                _buildBannerCard(context),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text("Categories", style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600)),
+                ),
+                const SizedBox(height: 8),
+                _buildCategoryScroll(),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text("Recommended", style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600)),
+                ),
+                const SizedBox(height: 12),
+                _buildServiceGrid(),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F6FC),
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: const Color(0xFFF8F6FC),
-        centerTitle: true,
-        title: Text("Femivio",
-            style: GoogleFonts.poppins(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF333333),
-            )),
-        leading: Padding(
-          padding: const EdgeInsets.all(8),
-          child: CircleAvatar(
-            backgroundColor: Colors.white,
-            child: ClipOval(
-              child: Image.network(
-                "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none, color: Color(0xFF333333)),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("No new notifications")),
-              );
-            },
-          )
-        ],
-      ),
+      backgroundColor: const Color(0xFFF4F1FB),
       body: _buildCurrentScreen(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
+        selectedItemColor: Colors.deepPurple,
+        unselectedItemColor: Colors.grey,
         onTap: _onTabTapped,
-        selectedItemColor: const Color(0xFF6A1B9A),
-        unselectedItemColor: const Color(0xFF888888),
-        backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
-        items: _bottomItems
+        selectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+        unselectedLabelStyle: GoogleFonts.poppins(),
+        items: bottomItems
             .map((item) => BottomNavigationBarItem(
           icon: Icon(item['icon']),
           label: item['label'],

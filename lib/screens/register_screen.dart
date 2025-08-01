@@ -19,7 +19,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
 
   Future<void> registerUser() async {
-    final url = Uri.parse('http://13.48.190.144:8080/api/users/register');
+    final url = Uri.parse('http://51.20.65.186:8080/api/users/register');
 
     try {
       final response = await http.post(

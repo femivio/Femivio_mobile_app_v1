@@ -4,10 +4,8 @@ import '../models/user.dart';
 import '../models/food.dart';
 
 class ApiService {
-  // Update with your backend base URL
-  static const baseUrl = 'http://13.48.190.144:8080/api';
+  static const baseUrl = 'http://51.20.65.186:8080/api';
 
-  // Register user
   static Future<http.Response> register(User user) {
     return http.post(
       Uri.parse('$baseUrl/users/register'),
@@ -16,7 +14,6 @@ class ApiService {
     );
   }
 
-  // Login user
   static Future<http.Response> login(String email, String password) {
     return http.post(
       Uri.parse('$baseUrl/users/login'),
@@ -25,7 +22,6 @@ class ApiService {
     );
   }
 
-  // Fetch food list
   static Future<List<Food>> getFoodItems() async {
     final response = await http.get(Uri.parse('$baseUrl/food'));
 
