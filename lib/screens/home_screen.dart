@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../utils/notification_service.dart'; // ✅ Notification service
 
+// Screens
+import 'notifications_page.dart';
 import 'ride_screen.dart';
 import 'food_screen.dart';
 import 'hotel_screen.dart';
@@ -22,40 +25,50 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    NotificationService.init(); // ✅ Initialize on startup
+  }
+
   final List<Map<String, dynamic>> services = [
     {
       'label': 'Book Ride',
       'image': 'https://images.unsplash.com/photo-1606760726760-0d36c3f5e2cf?auto=format&fit=crop&w=400&q=80',
-      'page': RideScreen(),
+      'page': const RideScreen(),
+      'notification': () => NotificationService.showRideBookingNotification(),
     },
     {
       'label': 'Food',
       'image': 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=400&q=80',
-      'page': FoodScreen(),
+      'page': const FoodScreen(),
+      'notification': () => NotificationService.showFoodDeliveryNotification(),
     },
     {
       'label': 'Hotel',
       'image': 'https://images.unsplash.com/photo-1551887373-6ccdb6f9724b?auto=format&fit=crop&w=400&q=80',
-      'page': HotelScreen(),
+      'page': const HotelScreen(),
+      'notification': () => NotificationService.showNewFeatureUpdate(),
     },
     {
       'label': 'Doctor',
       'image': 'https://images.unsplash.com/photo-1580281658629-33cbf7fdbb25?auto=format&fit=crop&w=400&q=80',
-      'page': DoctorScreen(),
+      'page': const DoctorScreen(),
+      'notification': () => NotificationService.showDoctorAppointmentReminder(),
     },
     {
       'label': 'Medicine',
       'image': 'https://images.unsplash.com/photo-1588776814546-ec7e4d9af6f1?auto=format&fit=crop&w=400&q=80',
-      'page': MedicineScreen(),
+      'page': const MedicineScreen(),
+      'notification': () => NotificationService.showMedicineReminderNotification(),
     },
     {
       'label': 'Hair Style',
       'image': 'https://images.unsplash.com/photo-1522336572468-97b06e8ef143?auto=format&fit=crop&w=400&q=80',
-      'page': HairstyleScreen(),
+      'page': const HairstyleScreen(),
+      'notification': () => NotificationService.showHairStyleBookingNotification(),
     },
   ];
-
-
 
   final List<Map<String, dynamic>> bottomItems = [
     {'icon': Icons.home, 'label': 'Home'},
@@ -85,10 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Hello, User 👋",
-                    style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
+                  Text("Hello, User 👋", style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500)),
                   Row(
                     children: [
                       const Icon(Icons.location_on, size: 16, color: Colors.deepPurple),
@@ -102,7 +112,10 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.notifications_none, color: Colors.deepPurple),
             onPressed: () {
-              // TODO: Add notification action
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NotificationsPage()),
+              );
             },
           )
         ],
@@ -111,13 +124,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBannerCard(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-
     return Container(
-      width: screenWidth - 32, // Full width minus horizontal margin
+      width: MediaQuery.of(context).size.width - 32,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       padding: const EdgeInsets.all(20),
-      height: 180, // Increased height
+      height: 180,
       decoration: BoxDecoration(
         color: const Color(0xFFD6C9FF),
         borderRadius: BorderRadius.circular(20),
@@ -130,20 +141,9 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Get 15% OFF",
-            style: GoogleFonts.poppins(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          Text("Get 15% OFF", style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          Text(
-            "On all bookings today",
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-            ),
-          ),
+          Text("On all bookings today", style: GoogleFonts.poppins(fontSize: 16)),
         ],
       ),
     );
@@ -159,12 +159,11 @@ class _HomeScreenState extends State<HomeScreen> {
         separatorBuilder: (_, __) => const SizedBox(width: 16),
         itemBuilder: (context, index) {
           final item = services[index];
-
           return GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => item['page']),
-            ),
+            onTap: () {
+              item['notification']();
+              Navigator.push(context, MaterialPageRoute(builder: (_) => item['page']));
+            },
             child: Container(
               width: 85,
               decoration: BoxDecoration(
@@ -182,36 +181,12 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.deepPurple.withOpacity(0.15),
-                          blurRadius: 6,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        item['image'],
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(item['image'], width: 42, height: 42, fit: BoxFit.cover),
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    item['label'],
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  Text(item['label'], textAlign: TextAlign.center, style: GoogleFonts.poppins(fontSize: 12.5, fontWeight: FontWeight.w500)),
                 ],
               ),
             ),
@@ -237,7 +212,10 @@ class _HomeScreenState extends State<HomeScreen> {
         itemBuilder: (context, index) {
           final item = services[index];
           return GestureDetector(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => item['page'])),
+            onTap: () {
+              item['notification']();
+              Navigator.push(context, MaterialPageRoute(builder: (_) => item['page']));
+            },
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -255,15 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Image.network(item['image'], height: 50, width: 50),
                   const SizedBox(height: 10),
-                  Text(
-                    item['label'],
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
+                  Text(item['label'], textAlign: TextAlign.center, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500)),
                 ],
               ),
             ),
@@ -325,12 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
         type: BottomNavigationBarType.fixed,
         selectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500),
         unselectedLabelStyle: GoogleFonts.poppins(),
-        items: bottomItems
-            .map((item) => BottomNavigationBarItem(
-          icon: Icon(item['icon']),
-          label: item['label'],
-        ))
-            .toList(),
+        items: bottomItems.map((item) => BottomNavigationBarItem(icon: Icon(item['icon']), label: item['label'])).toList(),
       ),
     );
   }

@@ -20,7 +20,11 @@ dependencies:
   animated_text_kit: ^4.2.2
   lottie: ^2.7.0
   http: ^1.1.0
-  cached_network_image: ^3.3.1 # ✅ Caches and speeds up image loading
+  cached_network_image: ^3.3.1
+  flutter_local_notifications: ^14.1.1
+  package_info_plus: ^6.0.0
+  shared_preferences: ^2.2.0
+  permission_handler: ^11.3.0
 
 dev_dependencies:
   flutter_test:
